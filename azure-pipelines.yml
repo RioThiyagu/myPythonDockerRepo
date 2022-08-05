@@ -1,53 +1,47 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+pool:
+  name: Azure Pipelines
+  demands: java
 
-resources:
-- repo: self
+steps:
+- task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@5
+  displayName: 'Prepare analysis on SonarQube'
+  inputs:
+    SonarQube: 'sonarqube-azure-service connection'
+    scannerMode: CLI
 
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    variables:
-       tags: $(Build.BuildId)
+- task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@5
+  displayName: 'Run Code Analysis'
 
-    steps:
+- task: Docker@0
+  displayName: 'Build an image'
+  inputs:
+    azureSubscription: 'Microsoft Partner Network (a8b508b6-da16-4c45-84f5-cac5c9f57513)'
+    azureContainerRegistry: '{"loginServer":"akspoccontainer.azurecr.io", "id" : "/subscriptions/a8b508b6-da16-4c45-84f5-cac5c9f57513/resourceGroups/Azure-MLOps/providers/Microsoft.ContainerRegistry/registries/akspoccontainer"}'
+    includeLatestTag: true
 
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        buildContext: '$(System.DefaultWorkingDirectory)'
-        repository: '$(AWS_ECR_REPOSITORY_URI)'
-        tags: |
-          $(Build.BuildId)
-          
+- task: Docker@0
+  displayName: 'Push an image'
+  inputs:
+    azureSubscription: 'Microsoft Partner Network (a8b508b6-da16-4c45-84f5-cac5c9f57513)'
+    azureContainerRegistry: '{"loginServer":"akspoccontainer.azurecr.io", "id" : "/subscriptions/a8b508b6-da16-4c45-84f5-cac5c9f57513/resourceGroups/Azure-MLOps/providers/Microsoft.ContainerRegistry/registries/akspoccontainer"}'
+    action: 'Push an image'
+    includeLatestTag: true
 
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    Contents: 'azure-aks.yaml'
+    TargetFolder: '$(build.artifactstagingdirectory)'
 
-    - task: CopyFiles@2
-      inputs:
-        Contents: 'eks-deploy-from-ecr.yaml'
-        TargetFolder: '$(build.artifactstagingdirectory)'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
-          
-    - task: ECRPushImage@1
-      inputs:
-        awsCredentials: '$(AWS_CREDENTIALS)'
-        regionName: '$(AWS_REGION)'
-        imageSource: 'imagename'
-        sourceImageName: '$(AWS_ECR_REPOSITORY_URI)'
-        sourceImageTag: '$(Build.BuildId)'
-        repositoryName: '$(AWS_ECR_REPOSITORY_NAME)'
-        pushTag: '$(Build.BuildId)'
-        
-        
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+
+steps:
+- task: Kubernetes@0
+  displayName: 'kubectl  apply'
+  inputs:
+    kubernetesServiceConnection: 'AKS-POC-Kubernetes Serviceconnection'
+    namespace: default
+    command: apply
+    useConfigurationFile: true
+    configuration: '$(System.DefaultWorkingDirectory)/_Test-CICD-Docker container-CI/drop/azure-aks.yaml'
