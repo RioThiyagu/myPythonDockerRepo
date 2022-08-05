@@ -16,7 +16,7 @@ spec:
       - name: mypythondockerrepo
         image: akspoccontainer.azurecr.io/riothiyagu/mypythondockerrepo:#{Build.BuildId}# 	
         ports:
-        - containerPort: 5000
+        - containerPort: 4000
 # service type loadbalancer       
 ---
 # apiVersion: v1
