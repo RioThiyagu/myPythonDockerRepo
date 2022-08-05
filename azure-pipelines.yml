@@ -36,7 +36,6 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
 
-steps:
 - task: Kubernetes@0
   displayName: 'kubectl  apply'
   inputs:
