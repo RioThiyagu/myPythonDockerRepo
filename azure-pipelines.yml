@@ -1,3 +1,8 @@
+ pool:
+  vmImage: ubuntu-latest
+  variables:
+  tags: $(Build.BuildId)
+
 pool:
   name: Azure Pipelines
   demands: java
