@@ -13,10 +13,10 @@ spec:
         app: my-python-app
     spec:
       containers:
-      - name: mypythondockerrepo
-        image: akspoccontainer.azurecr.io/riothiyagu/mypythondockerrepo:60
-       ports:
-        - containerPort: 5000
+        - name: mypythondockerrepo
+          image: akspoccontainer.azurecr.io/riothiyagu/mypythondockerrepo:60
+          ports:
+            - containerPort: 5000
 # service type loadbalancer       
 ---
  apiVersion: v1
@@ -28,6 +28,6 @@ spec:
      app: my-python-app
    ports:
      - protocol: TCP
-       port: 5000
+       port: 80
        targetPort: 5000
    type: LoadBalancer
