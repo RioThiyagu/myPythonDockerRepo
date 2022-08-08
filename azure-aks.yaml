@@ -12,7 +12,7 @@ spec:
       labels:
         app: my-python-app
     spec:
-      containers:
+    containers:
         - name: mypythondockerrepo
           image: akspoccontainer.azurecr.io/riothiyagu/mypythondockerrepo:#{Build.BuildId}#
           ports:
