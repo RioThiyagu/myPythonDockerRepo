@@ -15,7 +15,7 @@ spec:
       containers:
         - name: mypythondockerrepo
           image: akspoccontainer.azurecr.io/riothiyagu/mypythondockerrepo
-          imagePullPolicy: True
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
 
