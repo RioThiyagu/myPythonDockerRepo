@@ -16,13 +16,8 @@ spec:
         - name: mypythondockerrepo
           image: akspoccontainer.azurecr.io/riothiyagu/mypythondockerrepo
           imagePullPolicy: Always
-          ports:
-          - containerPort: 5000
-          env: 
-          - name: mypythondockerrepo
-          imagePullSecrets:
-          - name: acr-aks-secretkry
-
+            ports:
+              - containerPort: 5000
 # service type loadbalancer       
 ---
  apiVersion: v1
