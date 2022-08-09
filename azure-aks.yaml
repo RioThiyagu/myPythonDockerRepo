@@ -16,8 +16,9 @@ spec:
         - name: mypythondockerrepo
           image: akspoccontainer.azurecr.io/riothiyagu/mypythondockerrepo
           imagePullPolicy: Always
-            ports:
-              - containerPort: 5000
+          ports:
+            - containerPort: 5000
+
 # service type loadbalancer       
 ---
  apiVersion: v1
