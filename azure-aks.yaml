@@ -19,6 +19,7 @@ spec:
           ports:
           - containerPort: 5000
           env: 
+          - name: mypythondockerrepo
           imagePullSecrets:
           - name: acr-aks-secretkry
 
